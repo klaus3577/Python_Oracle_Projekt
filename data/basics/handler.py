@@ -9,7 +9,7 @@ class CSVHandler:
     
     @staticmethod
     def write(data: List[Any], filename: str, fields: List[str]):
-        "CSV írás fejléccel[1][21]"
+        "CSV írás fejléccel"
         with open(filename, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=fields, delimiter=';')
             writer.writeheader()
@@ -80,4 +80,5 @@ class XLSXHandler:
             
             result[sheet_name] = data
         
+
         return result
