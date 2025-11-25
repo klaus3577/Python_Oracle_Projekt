@@ -59,7 +59,7 @@ class DataAnalytics:
             ws[f'B{row}'] = count
             row += 1
         
-        # Oszlopdiagram létrehozása[2][23]
+        # Oszlopdiagram létrehozása
         chart = BarChart()
         chart.title = "Hallgatók Eloszlása Egyetemek Szerint"
         chart.x_axis.title = "Egyetem"
@@ -193,3 +193,4 @@ class DataAnalytics:
         chart.width = 25
         
         ws.add_chart(chart, "D2")
+
