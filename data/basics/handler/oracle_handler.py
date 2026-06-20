@@ -6,8 +6,8 @@ class OracleHandler:
     cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\Surface\Downloads\instantclient_23_0")
     def __init__(self, username: str, password: str, dsn: str):
         self.connection = cx_Oracle.connect(
-            user="U_LMBMBQ",
-            password="Zotya420",
+            user="",
+            password="",
             dsn="codd.inf.unideb.hu:1521/ora21cp.inf.unideb.hu"
         )
         self.cursor = self.connection.cursor()
