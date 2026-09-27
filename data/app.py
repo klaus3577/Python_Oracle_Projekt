@@ -12,6 +12,13 @@ from data.basics.handler import CSVHandler, JSONHandler, XLSXHandler
 from data.basics.handler.oracle_handler import OracleHandler
 from data.extra.analytics import DataAnalytics
 
+# Load settings from a local .env file if python-dotenv is installed
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 def main():    
     # 1. Adatok generálása Faker-rel
     print("\n1. Adatok generálása...")
@@ -89,32 +96,36 @@ def main():
     # 5. Oracle adatbázis
     print("\n5. Oracle adatbázis műveletek...")
     
-    try:
-        oracle = OracleHandler(
-            username='U_YRHEOD',
-            password='Kulazabalo0101',
-            dsn='codd.inf.unideb.hu:1521/ora21cp.inf.unideb.hu'
-        )
-        
-        
-        oracle.drop_tables()
-        
+    oracle_user = os.getenv('ORACLE_USER')
+    oracle_password = os.getenv('ORACLE_PASSWORD')
+    oracle_dsn = os.getenv('ORACLE_DSN')
 
-        oracle.create_tables()
-        
-        # Adatok beszúrása
-        print("   Adatok feltöltése...")
-        oracle.insert_universities(universities)
-        oracle.insert_courses(courses)
-        oracle.insert_students(students)
-        oracle.insert_enrollments(enrollments)
+    if not (oracle_user and oracle_password and oracle_dsn):
+        print("   Oracle skipped: set ORACLE_USER, ORACLE_PASSWORD and ORACLE_DSN "
+              "(see .env.example)")
+    else:
+        try:
+            oracle = OracleHandler(
+                username=oracle_user,
+                password=oracle_password,
+                dsn=oracle_dsn
+            )
 
-        
-        oracle.close()
-        
-    except Exception as e:
-        print(f"   Oracle hiba: {e}")
-        print("   (Folytatás Oracle nélkül...)")
+            oracle.drop_tables()
+            oracle.create_tables()
+
+            # Adatok beszúrása
+            print("   Adatok feltöltése...")
+            oracle.insert_universities(universities)
+            oracle.insert_courses(courses)
+            oracle.insert_students(students)
+            oracle.insert_enrollments(enrollments)
+
+            oracle.close()
+
+        except Exception as e:
+            print(f"   Oracle hiba: {e}")
+            print("   (Folytatás Oracle nélkül...)")
     
     # 6. EXTRA: Adatelemzés és vizualizáció
     print("\n6. EXTRA: Adatelemzési jelentés generálása...")
