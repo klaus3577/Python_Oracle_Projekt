@@ -2,7 +2,6 @@ import csv
 import json
 from openpyxl import Workbook, load_workbook
 from typing import List, Dict, Any, Type
-import cx_Oracle
 
 class CSVHandler:
     "CSV fájlok írása és olvasása"

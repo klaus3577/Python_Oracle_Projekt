@@ -1,15 +1,32 @@
-import cx_Oracle
+import os
 from typing import List, Dict, Any
 
+try:
+    import cx_Oracle
+except ImportError:  # the rest of the pipeline still runs without Oracle
+    cx_Oracle = None
+
+
 class OracleHandler:
-    "Oracle adatbázis kapcsolat és tábla kezelés"
-    cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\Surface\Downloads\instantclient_23_0")
+    """Oracle database connection and table management.
+
+    Credentials are passed in by the caller (see app.py, which reads them from
+    environment variables). If the Oracle Instant Client is not on the system
+    PATH, set ORACLE_CLIENT_LIB_DIR to its folder.
+    """
+
+    _client_initialised = False
+
     def __init__(self, username: str, password: str, dsn: str):
-        self.connection = cx_Oracle.connect(
-            user="",
-            password="",
-            dsn="codd.inf.unideb.hu:1521/ora21cp.inf.unideb.hu"
-        )
+        if cx_Oracle is None:
+            raise RuntimeError("cx_Oracle is not installed (pip install cx_Oracle)")
+
+        lib_dir = os.getenv("ORACLE_CLIENT_LIB_DIR")
+        if lib_dir and not OracleHandler._client_initialised:
+            cx_Oracle.init_oracle_client(lib_dir=lib_dir)
+            OracleHandler._client_initialised = True
+
+        self.connection = cx_Oracle.connect(user=username, password=password, dsn=dsn)
         self.cursor = self.connection.cursor()
     
     def create_tables(self):

@@ -1,0 +1,4 @@
+faker
+openpyxl
+python-dotenv
+cx_Oracle  # optional: only needed for the Oracle step
